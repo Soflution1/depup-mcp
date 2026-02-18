@@ -1,10 +1,20 @@
-# depup-mcp
-
-> Like WordPress auto-updates, but for all your dev projects.
+<p align="center">
+  <img src="static/banner.png" alt="depup-mcp" width="900"/>
+</p>
+<p align="center">
+  <strong>Like WordPress auto-updates, but for all your dev projects.</strong><br>
+  <sub>Scan · Audit · Update — 9 languages, 20 tools, one MCP server</sub>
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/languages-9-34d399"/>
+  <img src="https://img.shields.io/badge/tools-20-60a5fa"/>
+  <img src="https://img.shields.io/badge/CVE_scanner-included-f59e0b"/>
+  <img src="https://img.shields.io/badge/license-MIT-blue"/>
+</p>
 
 **depup-mcp** is an MCP server that keeps your projects' dependencies up to date, directly from Cursor, Claude, or any MCP-compatible AI assistant.
 
-Supports **Node.js**, **Python**, **Rust**, **Go**, **PHP**, **Ruby**, and **Dart/Flutter**.
+Supports **Node.js**, **Python**, **Rust**, **Go**, **PHP**, **Ruby**, **Dart/Flutter**, **Swift**, and **Kotlin/Java**.
 
 With AI-generated "vibe coding" projects, dependency maintenance is an afterthought. WordPress solved this with one-click updates. **depup-mcp** brings the same experience to modern development.
 
