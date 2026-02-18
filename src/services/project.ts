@@ -33,8 +33,8 @@ const DEFAULT_PROJECTS_DIRS = [
 
 export function getProjectsDir(): string {
   const configPaths = [
-    join(homedir(), ".depradarrc.json"),
-    join(homedir(), ".config", "depradar", "config.json"),
+    join(homedir(), ".depsonarrc.json"),
+    join(homedir(), ".config", "depsonar", "config.json"),
   ];
 
   for (const configPath of configPaths) {
@@ -66,6 +66,7 @@ export function run(cmd: string, cwd: string): string {
       cwd,
       encoding: "utf-8",
       timeout: COMMAND_TIMEOUT,
+      shell: "/bin/sh",
       stdio: ["pipe", "pipe", "pipe"],
       env: { ...process.env, FORCE_COLOR: "0" },
     });
@@ -613,15 +614,25 @@ export function buildUpdateCommand(info: ProjectInfo, packages: string | undefin
       if (pkgList) return level === "latest" ? `pnpm update ${pkgList} --latest` : `pnpm update ${pkgList}`;
       return level === "latest" ? "pnpm update --latest" : "pnpm update";
     }
-    if (pm === "yarn") return pkgList ? `yarn upgrade ${pkgList}` : "yarn upgrade";
+    if (pm === "yarn") {
+      if (pkgList) return level === "latest" ? `yarn upgrade ${pkgList} --latest` : `yarn upgrade ${pkgList}`;
+      return level === "latest" ? "yarn upgrade --latest" : "yarn upgrade";
+    }
     if (pm === "bun") return pkgList ? `bun update ${pkgList}` : "bun update";
-    return pkgList ? `npm update ${pkgList}` : "npm update";
+    // npm: npm update only bumps within semver range, useless for real updates
+    // Use npx npm-check-updates to actually bump package.json then npm install
+    if (level === "latest") {
+      if (pkgList) return `npx -y npm-check-updates -u ${pkgList.split(" ").join(" ")} && npm install`;
+      return "npx -y npm-check-updates -u && npm install";
+    }
+    // minor: bump minor+patch only
+    if (pkgList) return `npx -y npm-check-updates -u --target minor ${pkgList.split(" ").join(" ")} && npm install`;
+    return "npx -y npm-check-updates -u --target minor && npm install";
   }
 
   if (info.language === "python") {
     const pkgList = packages?.trim() || "";
     if (pkgList) return `pip install --upgrade ${pkgList}`;
-    // Update all from requirements.txt
     return `pip install --upgrade -r requirements.txt`;
   }
 
@@ -674,8 +685,8 @@ export function getCacheStatus(): { exists: boolean; age: string; projectCount: 
 
 export function loadConfig(): { projectsDir: string; ignoredPackages: string[] } {
   const configPaths = [
-    join(homedir(), ".depradarrc.json"),
-    join(homedir(), ".config", "depradar", "config.json"),
+    join(homedir(), ".depsonarrc.json"),
+    join(homedir(), ".config", "depsonar", "config.json"),
   ];
 
   for (const configPath of configPaths) {
@@ -693,7 +704,7 @@ export function loadConfig(): { projectsDir: string; ignoredPackages: string[] }
 }
 
 export function saveConfig(config: Record<string, unknown>): string {
-  const configPath = join(homedir(), ".depradarrc.json");
+  const configPath = join(homedir(), ".depsonarrc.json");
   const existing = existsSync(configPath)
     ? JSON.parse(readFileSync(configPath, "utf-8"))
     : {};

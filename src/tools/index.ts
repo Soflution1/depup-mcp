@@ -112,26 +112,26 @@ function resolveProject(project: string): string {
   if (existsSync(fromDir)) return fromDir;
 
   throw new Error(
-    `Project "${project}" not found.\nUse depradar_scan to list available projects.`
+    `Project "${project}" not found.\nUse depsonar_scan to list available projects.`
   );
 }
 
 export function registerTools(server: McpServer) {
 
-  // ─── depradar_alerts ─────────────────────────────────────────────────
+  // ─── depsonar_alerts ─────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_alerts",
+    "depsonar_alerts",
     {
       title: "Check Alerts",
       description: `Show pending dependency alerts from the last background scan. This reads the cache file written by the background checker (no live scan, instant response).
 
-If no cache exists, suggests running depradar_scan or setting up the background checker.
+If no cache exists, suggests running depsonar_scan or setting up the background checker.
 
 Examples:
   - "Any dependency alerts?"
   - "Do any of my projects need updates?"
-  - "Show depradar alerts"`,
+  - "Show depsonar alerts"`,
       inputSchema: AlertsSchema,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
@@ -144,8 +144,8 @@ Examples:
             "# No Recent Scan Data",
             "",
             "No background scan results found. You can:",
-            "- Run `depradar_scan` to scan now",
-            "- Run `depradar_setup_checker` to set up automatic background scans",
+            "- Run `depsonar_scan` to scan now",
+            "- Run `depsonar_setup_checker` to set up automatic background scans",
             "",
             status.exists ? `Last scan was too old to use.` : "No scan has been run yet.",
           ].join("\n")
@@ -156,10 +156,10 @@ Examples:
     }
   );
 
-  // ─── depradar_check ──────────────────────────────────────────────────
+  // ─── depsonar_check ──────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_check",
+    "depsonar_check",
     {
       title: "Check Outdated Dependencies",
       description: `Check a project for outdated dependencies. Supports Node.js, Python, Rust, Go, PHP, Ruby, and Dart/Flutter.
@@ -199,10 +199,10 @@ Examples:
     }
   );
 
-  // ─── depradar_update ─────────────────────────────────────────────────
+  // ─── depsonar_update ─────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_update",
+    "depsonar_update",
     {
       title: "Update Dependencies",
       description: `Update dependencies for a project. Works with any supported language.
@@ -249,10 +249,10 @@ Examples:
     }
   );
 
-  // ─── depradar_scan ───────────────────────────────────────────────────
+  // ─── depsonar_scan ───────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_scan",
+    "depsonar_scan",
     {
       title: "Scan All Projects",
       description: `Scan all projects in your workspace. Auto-detects language (Node, Python, Rust, Go, PHP, Ruby, Dart) and framework.
@@ -270,7 +270,7 @@ Examples:
       try {
         let projects = discoverProjects(directory);
         if (projects.length === 0) {
-          return text(`No projects found in \`${directory || getProjectsDir()}\`.\n\nUse \`depradar_config\` to set your projects directory.`);
+          return text(`No projects found in \`${directory || getProjectsDir()}\`.\n\nUse \`depsonar_config\` to set your projects directory.`);
         }
 
         if (framework) {
@@ -302,10 +302,10 @@ Examples:
     }
   );
 
-  // ─── depradar_update_all ─────────────────────────────────────────────
+  // ─── depsonar_update_all ─────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_update_all",
+    "depsonar_update_all",
     {
       title: "Update All Projects",
       description: `Batch update across all projects. Defaults to dry_run=true (safe preview).
@@ -323,7 +323,7 @@ Examples:
       try {
         let projects = discoverProjects(directory);
         if (projects.length === 0) {
-          return text("No projects found. Use `depradar_config` to set your directory.");
+          return text("No projects found. Use `depsonar_config` to set your directory.");
         }
 
         if (framework) projects = projects.filter((p) => p.framework.toLowerCase() === framework.toLowerCase());
@@ -371,10 +371,10 @@ Examples:
     }
   );
 
-  // ─── depradar_health ─────────────────────────────────────────────────
+  // ─── depsonar_health ─────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_health",
+    "depsonar_health",
     {
       title: "Health Report",
       description: `Score a project from 0-100. Checks outdated deps, security issues, lockfile.
@@ -397,10 +397,10 @@ Examples:
     }
   );
 
-  // ─── depradar_install ────────────────────────────────────────────────
+  // ─── depsonar_install ────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_install",
+    "depsonar_install",
     {
       title: "Install Dependencies",
       description: `Fresh install. Use clean=true to nuke node_modules/vendor first.
@@ -436,17 +436,17 @@ Examples:
     }
   );
 
-  // ─── depradar_setup_checker ──────────────────────────────────────────
+  // ─── depsonar_setup_checker ──────────────────────────────────────────
 
   server.registerTool(
-    "depradar_setup_checker",
+    "depsonar_setup_checker",
     {
       title: "Setup Background Checker",
       description: `Install or remove the background dependency checker. On macOS, uses launchd (native, lightweight). On Linux, uses cron.
 
-The checker runs on schedule, scans all projects, writes results to ~/.depradar-cache.json, then exits. Zero RAM between runs, zero AI tokens, zero cost.
+The checker runs on schedule, scans all projects, writes results to ~/.depsonar-cache.json, then exits. Zero RAM between runs, zero AI tokens, zero cost.
 
-Results are shown by depradar_alerts.
+Results are shown by depsonar_alerts.
 
 Examples:
   - "Setup background dependency checking"
@@ -470,16 +470,16 @@ Examples:
     }
   );
 
-  // ─── depradar_config ─────────────────────────────────────────────────
+  // ─── depsonar_config ─────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_config",
+    "depsonar_config",
     {
-      title: "Configure DepRadar",
-      description: `View or update configuration. Saved to ~/.depradarrc.json.
+      title: "Configure depsonar",
+      description: `View or update configuration. Saved to ~/.depsonarrc.json.
 
 Examples:
-  - "Show depradar config"
+  - "Show depsonar config"
   - "Set projects directory to ~/Code"`,
       inputSchema: ConfigSchema,
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
@@ -494,14 +494,14 @@ Examples:
             "# DepUp Configuration",
             "",
             `**Projects directory**: \`${config.projectsDir}\``,
-            `**Config file**: \`~/.depradarrc.json\``,
+            `**Config file**: \`~/.depsonarrc.json\``,
             "",
             "### Background Checker",
             cacheStatus.exists
               ? `- Last scan: ${cacheStatus.age}`
               + `\n- Projects tracked: ${cacheStatus.projectCount}`
               + `\n- Alerts: ${cacheStatus.alerts}`
-              : "- Not configured. Use `depradar_setup_checker` to enable.",
+              : "- Not configured. Use `depsonar_setup_checker` to enable.",
             "",
             "### Supported Languages",
             ...Object.entries(LANGUAGE_MARKERS).map(([key, m]) => `- ${m.name} (${m.files.join(", ")})`),
@@ -516,10 +516,10 @@ Examples:
     }
   );
 
-  // ─── depradar_audit ──────────────────────────────────────────────────
+  // ─── depsonar_audit ──────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_audit",
+    "depsonar_audit",
     {
       title: "Security Audit",
       description: `Scan projects for known security vulnerabilities (CVEs). Uses npm audit, cargo audit, pip-audit, composer audit, govulncheck.
@@ -553,10 +553,10 @@ Examples:
     }
   );
 
-  // ─── depradar_runtimes ───────────────────────────────────────────────
+  // ─── depsonar_runtimes ───────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_runtimes",
+    "depsonar_runtimes",
     {
       title: "Check Runtime Versions",
       description: `Check installed runtime versions (Node.js, Python, Rust, Go, PHP, Ruby, Dart, Swift). Detects EOL and outdated versions. Also checks project version files (.nvmrc, .python-version, rust-toolchain.toml, engines.node).
@@ -588,10 +588,10 @@ Examples:
     }
   );
 
-  // ─── depradar_toolchain ──────────────────────────────────────────────
+  // ─── depsonar_toolchain ──────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_toolchain",
+    "depsonar_toolchain",
     {
       title: "Check Global Toolchain",
       description: `Check versions of globally installed tools: npm, pnpm, yarn, bun, composer, cargo, pip, typescript, git, docker, homebrew, vercel-cli, supabase-cli, wrangler.
@@ -618,10 +618,10 @@ Examples:
     }
   );
 
-  // ─── depradar_docker ─────────────────────────────────────────────────
+  // ─── depsonar_docker ─────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_docker",
+    "depsonar_docker",
     {
       title: "Docker Image Audit",
       description: `Scan Dockerfile and docker-compose files for outdated or EOL base images. Checks: node, python, ruby, php, golang, rust, nginx, postgres, redis, ubuntu, alpine.
@@ -651,10 +651,10 @@ Examples:
     }
   );
 
-  // ─── depradar_actions ────────────────────────────────────────────────
+  // ─── depsonar_actions ────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_actions",
+    "depsonar_actions",
     {
       title: "GitHub Actions Audit",
       description: `Scan GitHub Actions workflow files for outdated or deprecated actions. Knows 30+ popular actions (actions/checkout, docker/build-push-action, cloudflare/wrangler-action, etc.).
@@ -684,10 +684,10 @@ Examples:
     }
   );
 
-  // ─── depradar_envcheck ───────────────────────────────────────────────
+  // ─── depsonar_envcheck ───────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_envcheck",
+    "depsonar_envcheck",
     {
       title: "Environment & Config Check",
       description: `Validate project environments: .env/.env.example sync, lockfile freshness, tsconfig best practices, Svelte config (detects deprecated svelte-preprocess with Svelte 5, duplicate adapters, etc.), multiple lockfiles.
@@ -718,10 +718,10 @@ Examples:
     }
   );
 
-  // ─── depradar_infra ──────────────────────────────────────────────────
+  // ─── depsonar_infra ──────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_infra",
+    "depsonar_infra",
     {
       title: "Full Infrastructure Report",
       description: `Complete infrastructure health check in one command. Combines: runtime versions, global toolchain, security audit, CVE advisories, Docker images, GitHub Actions, environment configs, secret scanning, license compliance, deprecated packages, and optionally dependency scan.
@@ -815,10 +815,10 @@ Examples:
     }
   );
 
-  // ─── depradar_cve ────────────────────────────────────────────────────
+  // ─── depsonar_cve ────────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_cve",
+    "depsonar_cve",
     {
       title: "CVE Advisory Check",
       description: `Check projects against known framework CVEs (Svelte, SvelteKit, devalue, Next.js, Vite, Express, Axios). Goes beyond npm audit by checking a curated database of framework-specific vulnerabilities.
@@ -865,10 +865,10 @@ Examples:
     }
   );
 
-  // ─── depradar_deprecated ─────────────────────────────────────────────
+  // ─── depsonar_deprecated ─────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_deprecated",
+    "depsonar_deprecated",
     {
       title: "Deprecated Package Check",
       description: `Detect deprecated, unmaintained, or replaced packages. Checks both npm deprecated flags and a curated list of known replacements (moment→dayjs, node-fetch→native fetch, request→undici, etc.).
@@ -900,10 +900,10 @@ Examples:
     }
   );
 
-  // ─── depradar_secrets ────────────────────────────────────────────────
+  // ─── depsonar_secrets ────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_secrets",
+    "depsonar_secrets",
     {
       title: "Secret Scanner",
       description: `Scan project files for exposed secrets, API keys, tokens, and credentials. Detects: AWS keys, GitHub tokens, Stripe keys, Supabase JWT, OpenAI/Anthropic keys, private keys, database URLs, generic API key patterns.
@@ -937,10 +937,10 @@ Examples:
     }
   );
 
-  // ─── depradar_licenses ───────────────────────────────────────────────
+  // ─── depsonar_licenses ───────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_licenses",
+    "depsonar_licenses",
     {
       title: "License Compliance Check",
       description: `Check dependency licenses for commercial/SaaS compatibility. Flags: GPL/AGPL (copyleft, requires source disclosure), non-commercial (CC-BY-NC), unknown licenses.
@@ -974,15 +974,15 @@ Examples:
     }
   );
 
-  // ─── depradar_live_cve ───────────────────────────────────────────────
+  // ─── depsonar_live_cve ───────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_live_cve",
+    "depsonar_live_cve",
     {
       title: "Live CVE Scan (osv.dev)",
       description: `Real-time vulnerability scan using the osv.dev API. Checks every installed package against the global OSV database (npm, PyPI, crates.io, Go, Packagist, RubyGems, Pub).
 
-Unlike depradar_audit (which uses local tools like npm audit), this queries the live osv.dev database for the most up-to-date vulnerability data. No API key needed.
+Unlike depsonar_audit (which uses local tools like npm audit), this queries the live osv.dev database for the most up-to-date vulnerability data. No API key needed.
 
 Examples:
   - "Live CVE scan all my projects"
@@ -1013,15 +1013,15 @@ Examples:
     }
   );
 
-  // ─── depradar_changelog ──────────────────────────────────────────────
+  // ─── depsonar_changelog ──────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_changelog",
+    "depsonar_changelog",
     {
       title: "Changelog & Breaking Changes",
       description: `Check changelogs and breaking changes before updating. Shows major/minor/patch breakdown with changelog URLs and release notes for breaking updates.
 
-Run this BEFORE depradar_update to understand what will change.
+Run this BEFORE depsonar_update to understand what will change.
 
 Examples:
   - "Show changelog for RoomPilot before updating"
@@ -1043,10 +1043,10 @@ Examples:
     }
   );
 
-  // ─── depradar_migrate ────────────────────────────────────────────────
+  // ─── depsonar_migrate ────────────────────────────────────────────────
 
   server.registerTool(
-    "depradar_migrate",
+    "depsonar_migrate",
     {
       title: "Framework Migration Detector",
       description: `Detect framework migration needs by scanning code for deprecated patterns. Currently supports: Svelte 4→5, Next.js 13→14→15.
@@ -1096,7 +1096,7 @@ function getCheckerPath(): string {
 }
 
 function setupLaunchd(intervalHours: number, uninstall: boolean): string {
-  const plistName = "com.depradar.checker";
+  const plistName = "com.depsonar.checker";
   const plistPath = join(homedir(), "Library", "LaunchAgents", `${plistName}.plist`);
 
   if (uninstall) {
@@ -1113,7 +1113,7 @@ function setupLaunchd(intervalHours: number, uninstall: boolean): string {
   // Use npx as fallback if checker.js path not found
   const programArgs = checkerPath
     ? `    <string>node</string>\n    <string>${checkerPath}</string>`
-    : `    <string>npx</string>\n    <string>DepRadar</string>\n    <string>--check</string>`;
+    : `    <string>npx</string>\n    <string>depsonar</string>\n    <string>--check</string>`;
 
   const plist = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -1130,7 +1130,7 @@ ${programArgs}
   <key>RunAtLoad</key>
   <true/>
   <key>StandardErrorPath</key>
-  <string>${join(homedir(), ".depradar-checker.log")}</string>
+  <string>${join(homedir(), ".depsonar-checker.log")}</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
@@ -1152,56 +1152,56 @@ ${programArgs}
     `**Schedule**: Every ${intervalHours} hour(s)`,
     `**Method**: macOS launchd (native, lightweight)`,
     `**Plist**: \`${plistPath}\``,
-    `**Log**: \`~/.depradar-checker.log\``,
-    `**Cache**: \`~/.depradar-cache.json\``,
+    `**Log**: \`~/.depsonar-checker.log\``,
+    `**Cache**: \`~/.depsonar-cache.json\``,
     "",
     "The checker will run immediately, then every " + intervalHours + "h.",
     "It scans your projects, writes the cache, and exits. Zero RAM between runs.",
     "",
-    "Use `depradar_alerts` to see results.",
-    "Use `depradar_setup_checker` with `uninstall: true` to remove.",
+    "Use `depsonar_alerts` to see results.",
+    "Use `depsonar_setup_checker` with `uninstall: true` to remove.",
   ].join("\n");
 }
 
 function setupCron(intervalHours: number, uninstall: boolean): string {
-  const marker = "# DepRadar background checker";
+  const marker = "# depsonar background checker";
 
   try {
     const currentCron = run("crontab -l", homedir()).split("\n");
-    const filtered = currentCron.filter((line) => !line.includes(marker) && !line.includes("depradar"));
+    const filtered = currentCron.filter((line) => !line.includes(marker) && !line.includes("depsonar"));
 
     if (uninstall) {
       const newCron = filtered.join("\n").trim() + "\n";
-      writeFileSync("/tmp/depradar-crontab", newCron, "utf-8");
-      run("crontab /tmp/depradar-crontab", homedir());
-      unlinkSync("/tmp/depradar-crontab");
+      writeFileSync("/tmp/depsonar-crontab", newCron, "utf-8");
+      run("crontab /tmp/depsonar-crontab", homedir());
+      unlinkSync("/tmp/depsonar-crontab");
       return "Background checker removed from crontab.";
     }
 
     const checkerPath = getCheckerPath();
     const cmd = checkerPath
       ? `node ${checkerPath}`
-      : "npx --yes DepRadar --check";
+      : "npx --yes depsonar --check";
 
-    const cronLine = `0 */${intervalHours} * * * ${cmd} 2>> ~/.depradar-checker.log ${marker}`;
+    const cronLine = `0 */${intervalHours} * * * ${cmd} 2>> ~/.depsonar-checker.log ${marker}`;
     filtered.push(cronLine);
 
     const newCron = filtered.join("\n").trim() + "\n";
-    writeFileSync("/tmp/depradar-crontab", newCron, "utf-8");
-    run("crontab /tmp/depradar-crontab", homedir());
-    unlinkSync("/tmp/depradar-crontab");
+    writeFileSync("/tmp/depsonar-crontab", newCron, "utf-8");
+    run("crontab /tmp/depsonar-crontab", homedir());
+    unlinkSync("/tmp/depsonar-crontab");
 
     return [
       "# Background Checker Installed ✅",
       "",
       `**Schedule**: Every ${intervalHours} hour(s)`,
       `**Method**: crontab`,
-      `**Log**: \`~/.depradar-checker.log\``,
-      `**Cache**: \`~/.depradar-cache.json\``,
+      `**Log**: \`~/.depsonar-checker.log\``,
+      `**Cache**: \`~/.depsonar-cache.json\``,
       "",
-      "Use `depradar_alerts` to see results.",
+      "Use `depsonar_alerts` to see results.",
     ].join("\n");
   } catch {
-    return "Could not configure crontab. You can manually add this to your crontab:\n\n```\n0 */6 * * * npx --yes DepRadar --check 2>> ~/.depradar-checker.log\n```";
+    return "Could not configure crontab. You can manually add this to your crontab:\n\n```\n0 */6 * * * npx --yes depsonar --check 2>> ~/.depsonar-checker.log\n```";
   }
 }

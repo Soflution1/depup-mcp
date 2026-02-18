@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * depradar-checker: Lightweight background scanner
+ * depsonar-checker: Lightweight background scanner
  *
  * Runs via cron/launchd, scans all projects for outdated deps,
- * writes results to ~/.depradar-cache.json, and exits.
+ * writes results to ~/.depsonar-cache.json, and exits.
  *
  * - Zero RAM between runs (process exits)
  * - Zero tokens (no AI API calls)
@@ -30,11 +30,11 @@ export async function main() {
   const projects = discoverProjects();
 
   if (projects.length === 0) {
-    console.error("[DepRadar] No projects found. Configure with ~/.depradarrc.json");
+    console.error("[depsonar] No projects found. Configure with ~/.depsonarrc.json");
     process.exit(0);
   }
 
-  console.error(`[DepRadar] Scanning ${projects.length} projects...`);
+  console.error(`[depsonar] Scanning ${projects.length} projects...`);
 
   const entries: CacheEntry[] = [];
 
@@ -81,7 +81,7 @@ export async function main() {
       (e) => autoList.includes(e.project) && e.outdatedCount > 0
     );
     if (toUpdate.length > 0) {
-      console.error(`[DepRadar] Auto-updating ${toUpdate.length} project(s)...`);
+      console.error(`[depsonar] Auto-updating ${toUpdate.length} project(s)...`);
       for (const entry of toUpdate) {
         const info = projects.find((p) => p.name === entry.project);
         if (!info) continue;
@@ -95,7 +95,7 @@ export async function main() {
         }
       }
       // Re-scan updated projects to refresh cache
-      console.error(`[DepRadar] Re-scanning auto-updated projects...`);
+      console.error(`[depsonar] Re-scanning auto-updated projects...`);
       for (const entry of toUpdate) {
         const info = projects.find((p) => p.name === entry.project);
         if (!info) continue;
@@ -123,16 +123,16 @@ export async function main() {
   const alerts = entries.filter((e) => e.outdatedCount > 0).length;
 
   console.error(
-    `[DepRadar] Done in ${elapsed}s. ${entries.length} projects, ${alerts} need attention.`
+    `[depsonar] Done in ${elapsed}s. ${entries.length} projects, ${alerts} need attention.`
   );
-  console.error(`[DepRadar] Cache written to ~/.depradar-cache.json`);
+  console.error(`[depsonar] Cache written to ~/.depsonar-cache.json`);
 }
 
 // Only run if called directly (not imported)
 const isDirectRun = process.argv[1]?.endsWith("checker.js") || process.argv.includes("--check");
 if (isDirectRun) {
   main().catch((err) => {
-    console.error("[DepRadar] Fatal:", err.message);
+    console.error("[depsonar] Fatal:", err.message);
     process.exit(1);
   });
 }

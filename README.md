@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="static/banner.png" alt="DepRadar" width="900"/>
+  <img src="static/banner.png" alt="depsonar" width="900"/>
 </p>
 <p align="center">
   <strong>The most complete dependency audit MCP server.</strong><br>
@@ -12,15 +12,15 @@
   <img src="https://img.shields.io/badge/license-MIT-blue"/>
 </p>
 
-**DepRadar** is an MCP server that keeps your projects' dependencies up to date, scans for vulnerabilities, detects framework migrations, and audits your entire dev infrastructure — directly from Cursor, Claude, or any MCP-compatible AI assistant.
+**depsonar** is an MCP server that keeps your projects' dependencies up to date, scans for vulnerabilities, detects framework migrations, and audits your entire dev infrastructure — directly from Cursor, Claude, or any MCP-compatible AI assistant.
 
 Supports **Node.js**, **Python**, **Rust**, **Go**, **PHP**, **Ruby**, **Dart/Flutter**, **Swift**, and **Kotlin/Java**.
 
 ---
 
-## Why DepRadar?
+## Why depsonar?
 
-With AI-generated "vibe coding" projects, dependency maintenance is an afterthought. WordPress solved this with one-click updates. **DepRadar** brings the same experience to modern development — plus security scanning, migration detection, and infrastructure auditing.
+With AI-generated "vibe coding" projects, dependency maintenance is an afterthought. WordPress solved this with one-click updates. **depsonar** brings the same experience to modern development — plus security scanning, migration detection, and infrastructure auditing.
 
 ---
 
@@ -65,9 +65,9 @@ Add to `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "DepRadar": {
+    "depsonar": {
       "command": "npx",
-      "args": ["-y", "DepRadar"]
+      "args": ["-y", "depsonar"]
     }
   }
 }
@@ -76,14 +76,14 @@ Add to `~/.cursor/mcp.json`:
 ### Option 2: Global install
 
 ```bash
-npm install -g DepRadar
+npm install -g depsonar
 ```
 
 ```json
 {
   "mcpServers": {
-    "DepRadar": {
-      "command": "DepRadar"
+    "depsonar": {
+      "command": "depsonar"
     }
   }
 }
@@ -92,16 +92,16 @@ npm install -g DepRadar
 ### Option 3: Clone
 
 ```bash
-git clone https://github.com/Soflution1/DepRadar.git
-cd DepRadar && npm install && npm run build
+git clone https://github.com/Soflution1/depsonar.git
+cd depsonar && npm install && npm run build
 ```
 
 ```json
 {
   "mcpServers": {
-    "DepRadar": {
+    "depsonar": {
       "command": "node",
-      "args": ["/path/to/DepRadar/dist/index.js"]
+      "args": ["/path/to/depsonar/dist/index.js"]
     }
   }
 }
@@ -115,39 +115,39 @@ Restart Cursor after editing the config.
 
 | Tool | Description |
 |------|-------------|
-| `depradar_scan` | Scan all projects for outdated deps |
-| `depradar_check` | Check a specific project |
-| `depradar_update` | Update a project's dependencies |
-| `depradar_update_all` | Batch update all projects |
-| `depradar_health` | Health score 0-100 for a project |
-| `depradar_install` | Fresh install with optional clean |
-| `depradar_audit` | Security scan (npm/pip/cargo audit) |
-| `depradar_cve` | Curated framework CVE advisory check |
-| `depradar_live_cve` | Real-time CVE scan via osv.dev API |
-| `depradar_changelog` | Changelogs & breaking changes before updating |
-| `depradar_migrate` | Framework migration detector |
-| `depradar_deprecated` | Deprecated & replaced package detection |
-| `depradar_secrets` | Secret & API key scanner |
-| `depradar_licenses` | License compliance (GPL/AGPL flags) |
-| `depradar_runtimes` | Runtime version check (EOL detection) |
-| `depradar_toolchain` | Global tool versions |
-| `depradar_docker` | Docker image audit |
-| `depradar_actions` | GitHub Actions audit |
-| `depradar_envcheck` | .env, lockfile, config validation |
-| `depradar_infra` | Full infrastructure report (everything) |
-| `depradar_alerts` | Instant alerts from background scans |
-| `depradar_setup_checker` | Setup automatic background scanning |
-| `depradar_config` | View/edit configuration |
+| `depsonar_scan` | Scan all projects for outdated deps |
+| `depsonar_check` | Check a specific project |
+| `depsonar_update` | Update a project's dependencies |
+| `depsonar_update_all` | Batch update all projects |
+| `depsonar_health` | Health score 0-100 for a project |
+| `depsonar_install` | Fresh install with optional clean |
+| `depsonar_audit` | Security scan (npm/pip/cargo audit) |
+| `depsonar_cve` | Curated framework CVE advisory check |
+| `depsonar_live_cve` | Real-time CVE scan via osv.dev API |
+| `depsonar_changelog` | Changelogs & breaking changes before updating |
+| `depsonar_migrate` | Framework migration detector |
+| `depsonar_deprecated` | Deprecated & replaced package detection |
+| `depsonar_secrets` | Secret & API key scanner |
+| `depsonar_licenses` | License compliance (GPL/AGPL flags) |
+| `depsonar_runtimes` | Runtime version check (EOL detection) |
+| `depsonar_toolchain` | Global tool versions |
+| `depsonar_docker` | Docker image audit |
+| `depsonar_actions` | GitHub Actions audit |
+| `depsonar_envcheck` | .env, lockfile, config validation |
+| `depsonar_infra` | Full infrastructure report (everything) |
+| `depsonar_alerts` | Instant alerts from background scans |
+| `depsonar_setup_checker` | Setup automatic background scanning |
+| `depsonar_config` | View/edit configuration |
 
 ---
 
 ## Background Checker
 
-The background checker scans your projects on a schedule and caches results. When you open Cursor, `depradar_alerts` reads the cache instantly — zero wait.
+The background checker scans your projects on a schedule and caches results. When you open Cursor, `depsonar_alerts` reads the cache instantly — zero wait.
 
 1. A lightweight script runs every N hours via macOS launchd or Linux cron
 2. Scans all projects, compares versions with registries
-3. Writes results to `~/.depradar-cache.json`, exits immediately
+3. Writes results to `~/.depsonar-cache.json`, exits immediately
 4. Zero RAM between runs, zero AI tokens, zero cost
 
 **Setup from Cursor:** "Setup background checking every 6 hours"
@@ -159,7 +159,7 @@ The background checker scans your projects on a schedule and caches results. Whe
 Set your projects directory (auto-detected from `~/Cursor/App`, `~/Projects`, `~/Developer`, `~/Code`, `~/dev`):
 
 ```json
-// ~/.depradarrc.json
+// ~/.depsonarrc.json
 {
   "projectsDir": "/Users/me/my-projects"
 }
@@ -192,7 +192,7 @@ SvelteKit · Next.js · Nuxt · Astro · Remix · SolidStart · Django · Flask 
 ## Architecture
 
 ```
-DepRadar/
+depsonar/
 ├── src/
 │   ├── index.ts              # Entry: MCP server or --check mode
 │   ├── checker.ts            # Background scanner (cron/launchd)
@@ -218,7 +218,7 @@ DepRadar/
 │   │   └── envcheck.ts       # Environment validator
 │   └── tools/index.ts        # 23 MCP tools
 ├── static/
-│   ├── logo.png              # DepRadar logo (512x512)
+│   ├── logo.png              # depsonar logo (512x512)
 │   └── banner.png            # GitHub banner (1800x600)
 ├── package.json
 ├── tsconfig.json
@@ -230,10 +230,10 @@ DepRadar/
 ## CLI
 
 ```bash
-DepRadar              # Start MCP server (for Cursor)
-DepRadar --check      # Run background scan
-DepRadar --version    # Show version
-DepRadar --help       # List all 23 tools
+depsonar              # Start MCP server (for Cursor)
+depsonar --check      # Run background scan
+depsonar --version    # Show version
+depsonar --help       # List all 23 tools
 ```
 
 ---

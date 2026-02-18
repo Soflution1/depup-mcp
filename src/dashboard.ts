@@ -1,25 +1,30 @@
 #!/usr/bin/env node
 /**
- * DepRadar dashboard v2: Full dependency management interface
+ * depsonar dashboard v3: Full dependency management interface
  * http://127.0.0.1:24681
  */
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { main as runChecker } from "./checker.js";
 import {
   discoverProjects, getOutdated, isMajorUpdate,
   groupByEcosystem, buildUpdateCommand, getSecurityIssues,
   computeHealthReport, run, loadConfig, saveConfig,
+  getFrameworkVersion, writeCache,
 } from "./services/project.js";
+import type { CacheEntry } from "./types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = 24681;
-const CACHE_PATH = join(homedir(), ".depradar-cache.json");
+const CACHE_PATH = join(homedir(), ".depsonar-cache.json");
 
-function readCache() {
+// ─── Scan Progress State ───────────────────────────────────────────────
+let scanning = false;
+let scanProgress = { current: 0, total: 0, currentProject: "", percent: 0 };
+
+function readCacheFile() {
   if (!existsSync(CACHE_PATH)) return null;
   try { return JSON.parse(readFileSync(CACHE_PATH, "utf-8")); } catch { return null; }
 }
@@ -42,9 +47,7 @@ function readBody(req: IncomingMessage): Promise<string> {
   });
 }
 
-let scanning = false;
 let htmlCache: string | null = null;
-
 function getHtml(): string {
   if (htmlCache) return htmlCache;
   const htmlPath = join(__dirname, "..", "dashboard.html");
@@ -55,6 +58,56 @@ function getHtml(): string {
   return "<h1>dashboard.html not found</h1>";
 }
 
+// ─── Inline scan with progress tracking ────────────────────────────────
+// getOutdated uses execSync, so we yield the event loop between each project
+function yieldEvent(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function runScanWithProgress() {
+  const projects = discoverProjects();
+  if (projects.length === 0) return;
+
+  scanProgress = { current: 0, total: projects.length, currentProject: "", percent: 0 };
+  const entries: CacheEntry[] = [];
+
+  for (let i = 0; i < projects.length; i++) {
+    const info = projects[i];
+    scanProgress.current = i;
+    scanProgress.currentProject = info.name;
+    scanProgress.percent = Math.round((i / projects.length) * 100);
+
+    // Yield so HTTP server can respond to progress polls
+    await yieldEvent();
+
+    try {
+      const outdated = getOutdated(info.path, info);
+      const outdatedCount = Object.keys(outdated).length;
+      const majorCount = Object.entries(outdated).filter(([, pkg]) =>
+        isMajorUpdate(pkg.current, pkg.latest)
+      ).length;
+
+      let score = 100;
+      score -= Math.min(outdatedCount * 3, 40);
+      score -= majorCount * 10;
+      score = Math.max(0, Math.min(100, score));
+
+      entries.push({
+        project: info.name, path: info.path, language: info.language,
+        framework: info.framework, outdatedCount, majorCount,
+        securityIssues: 0, score, checkedAt: new Date().toISOString(),
+      });
+    } catch {}
+
+    scanProgress.current = i + 1;
+    scanProgress.percent = Math.round(((i + 1) / projects.length) * 100);
+  }
+
+  writeCache(entries);
+  scanProgress = { current: projects.length, total: projects.length, currentProject: "Done", percent: 100 };
+}
+
+// ─── Request Handler ───────────────────────────────────────────────────
 async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   const url = req.url || "/";
 
@@ -67,11 +120,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     return res.end();
   }
 
-  // API: Overview
+  // API: Overview + progress
   if (url === "/api/status") {
-    const cache = readCache();
-    if (!cache) return jsonRes(res, { projects: [], updatedAt: null, scanning });
-    return jsonRes(res, { ...cache, scanning });
+    const cache = readCacheFile();
+    const base = cache || { projects: [], updatedAt: null };
+    return jsonRes(res, { ...base, scanning, scanProgress });
+  }
+
+  // API: Scan progress only (lightweight poll)
+  if (url === "/api/scan/progress") {
+    return jsonRes(res, { scanning, ...scanProgress });
   }
 
   // API: Project detail (live scan)
@@ -90,8 +148,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       const enrichedGroups: Record<string, any[]> = {};
       for (const [ecosystem, items] of Object.entries(grouped)) {
         enrichedGroups[ecosystem] = items.map(([name, pkg]) => ({
-          name,
-          ...pkg,
+          name, ...pkg,
           updateType: isMajorUpdate(pkg.current, pkg.latest) ? "major"
             : pkg.current !== pkg.wanted ? "minor" : "patch",
         }));
@@ -114,12 +171,12 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     }
   }
 
-  // API: Trigger background scan
+  // API: Trigger scan
   if (url === "/api/scan" && req.method === "POST") {
     if (scanning) return jsonRes(res, { error: "Scan already in progress" }, 409);
     scanning = true;
     jsonRes(res, { started: true });
-    try { await runChecker(); } catch (e) { console.error("[dashboard] Scan error:", e); }
+    try { await runScanWithProgress(); } catch (e) { console.error("[dashboard] Scan error:", e); }
     scanning = false;
     return;
   }
@@ -131,10 +188,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     const projects = discoverProjects();
     const info = projects.find(p => p.name === project);
     if (!info) return jsonRes(res, { error: "Project not found" }, 404);
-
     const cmd = buildUpdateCommand(info, packages, level);
     if (dryRun) return jsonRes(res, { command: cmd, dryRun: true });
-
     try {
       const output = run(cmd, info.path);
       return jsonRes(res, { command: cmd, output, success: true });
@@ -149,18 +204,14 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     return jsonRes(res, { autoUpdate: config.autoUpdate || [] });
   }
 
-  // API: Toggle auto-update for a project
+  // API: Toggle auto-update
   if (url === "/api/autoupdate" && req.method === "POST") {
     const body = JSON.parse(await readBody(req));
     const { project, enabled } = body;
     const config = loadConfig() as any;
     const list: string[] = config.autoUpdate || [];
-    if (enabled && !list.includes(project)) {
-      list.push(project);
-    } else if (!enabled) {
-      const idx = list.indexOf(project);
-      if (idx >= 0) list.splice(idx, 1);
-    }
+    if (enabled && !list.includes(project)) list.push(project);
+    else if (!enabled) { const idx = list.indexOf(project); if (idx >= 0) list.splice(idx, 1); }
     saveConfig({ autoUpdate: list });
     return jsonRes(res, { autoUpdate: list });
   }
@@ -172,5 +223,5 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
 const server = createServer(handleRequest);
 server.listen(PORT, "127.0.0.1", () => {
-  console.error("[DepRadar] Dashboard v2 running on http://127.0.0.1:" + PORT);
+  console.error("[depsonar] Dashboard v3 running on http://127.0.0.1:" + PORT);
 });

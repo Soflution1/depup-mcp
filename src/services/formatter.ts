@@ -86,7 +86,7 @@ export function formatScanSummary(
 
   const footer: string[] = [];
   if (totalOutdated > 0) {
-    footer.push(`\n> Use \`depradar_check\` for details, or \`depradar_update_all\` to update everything.`);
+    footer.push(`\n> Use \`depsonar_check\` for details, or \`depsonar_update_all\` to update everything.`);
   }
 
   return truncate([...header, ...rows, ...footer].join("\n"));
@@ -201,7 +201,7 @@ export function formatCacheAlerts(cache: CacheFile): string {
     lines.push(`| ${p.project} | ${langName} | ${p.outdatedCount} | ${p.majorCount} | ${scoreEmoji} ${p.score} |`);
   }
 
-  lines.push("", "> Use `depradar_check` for details or `depradar_update_all` to update.");
+  lines.push("", "> Use `depsonar_check` for details or `depsonar_update_all` to update.");
 
   return lines.join("\n");
 }
@@ -425,7 +425,7 @@ export function formatCve(results: CveCheckResult[], dbStats?: { total: number; 
     lines.push("");
   }
 
-  lines.push("> Fix: `depradar_update` with the specific packages listed above.");
+  lines.push("> Fix: `depsonar_update` with the specific packages listed above.");
 
   return truncate(lines.join("\n"));
 }
@@ -586,7 +586,7 @@ export function formatAudit(results: AuditResult[]): string {
     }
   }
 
-  lines.push("", "> Fix vulnerabilities: `depradar_update` with `level: patch` for security-only fixes.");
+  lines.push("", "> Fix vulnerabilities: `depsonar_update` with `level: patch` for security-only fixes.");
 
   return truncate(lines.join("\n"));
 }

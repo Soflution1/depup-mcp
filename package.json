@@ -1,5 +1,5 @@
 {
-  "name": "DepRadar",
+  "name": "depsonar",
   "version": "4.0.0",
   "description": "MCP server for dependency auditing, live CVE scanning, migration detection & full stack health. 23 tools, 9 languages.",
   "keywords": [
@@ -30,19 +30,19 @@
   ],
   "author": "Soflution Ltd",
   "license": "MIT",
-  "homepage": "https://github.com/Soflution1/DepRadar",
+  "homepage": "https://github.com/Soflution1/depsonar",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Soflution1/DepRadar.git"
+    "url": "https://github.com/Soflution1/depsonar.git"
   },
   "bugs": {
-    "url": "https://github.com/Soflution1/DepRadar/issues"
+    "url": "https://github.com/Soflution1/depsonar/issues"
   },
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "DepRadar": "dist/index.js",
-    "depradar-dashboard": "dist/dashboard.js"
+    "depsonar": "dist/index.js",
+    "depsonar-dashboard": "dist/dashboard.js"
   },
   "files": [
     "dist",

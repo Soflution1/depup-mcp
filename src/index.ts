@@ -14,35 +14,35 @@ if (args.includes("--check") || args.includes("-c")) {
   console.log(`${SERVER_NAME} v${SERVER_VERSION}
 
 Usage:
-  DepRadar              Start MCP server (for Cursor/Claude)
-  DepRadar --check      Run background scan (for cron/launchd)
-  DepRadar --version    Show version
-  DepRadar --help       Show this help
+  depsonar              Start MCP server (for Cursor/Claude)
+  depsonar --check      Run background scan (for cron/launchd)
+  depsonar --version    Show version
+  depsonar --help       Show this help
 
 MCP Tools:
-  depradar_alerts           Show pending alerts from background scans
-  depradar_scan             Scan all projects for outdated deps
-  depradar_check            Check a specific project
-  depradar_update           Update a project's dependencies
-  depradar_update_all       Batch update all projects
-  depradar_health           Health score for a project
-  depradar_install          Fresh install dependencies
-  depradar_audit            Security vulnerability scan (npm/pip/cargo audit)
-  depradar_cve              Known framework CVE advisory check
-  depradar_live_cve         Real-time CVE scan via osv.dev API
-  depradar_changelog        Changelogs & breaking changes before updating
-  depradar_migrate          Framework migration detector (Svelte 4→5, etc.)
-  depradar_deprecated       Deprecated & replaced package detection
-  depradar_secrets          Secret & API key scanner
-  depradar_licenses         License compliance check (GPL/AGPL flags)
-  depradar_runtimes         Check runtime versions (Node, Python, Rust...)
-  depradar_toolchain        Check global tool versions (npm, pnpm, git...)
-  depradar_docker           Audit Docker images for outdated/EOL
-  depradar_actions          Audit GitHub Actions versions
-  depradar_envcheck         Validate .env, lockfiles, configs
-  depradar_infra            Full infrastructure report (everything)
-  depradar_setup_checker    Setup automatic background scanning
-  depradar_config           View/edit configuration
+  depsonar_alerts           Show pending alerts from background scans
+  depsonar_scan             Scan all projects for outdated deps
+  depsonar_check            Check a specific project
+  depsonar_update           Update a project's dependencies
+  depsonar_update_all       Batch update all projects
+  depsonar_health           Health score for a project
+  depsonar_install          Fresh install dependencies
+  depsonar_audit            Security vulnerability scan (npm/pip/cargo audit)
+  depsonar_cve              Known framework CVE advisory check
+  depsonar_live_cve         Real-time CVE scan via osv.dev API
+  depsonar_changelog        Changelogs & breaking changes before updating
+  depsonar_migrate          Framework migration detector (Svelte 4→5, etc.)
+  depsonar_deprecated       Deprecated & replaced package detection
+  depsonar_secrets          Secret & API key scanner
+  depsonar_licenses         License compliance check (GPL/AGPL flags)
+  depsonar_runtimes         Check runtime versions (Node, Python, Rust...)
+  depsonar_toolchain        Check global tool versions (npm, pnpm, git...)
+  depsonar_docker           Audit Docker images for outdated/EOL
+  depsonar_actions          Audit GitHub Actions versions
+  depsonar_envcheck         Validate .env, lockfiles, configs
+  depsonar_infra            Full infrastructure report (everything)
+  depsonar_setup_checker    Setup automatic background scanning
+  depsonar_config           View/edit configuration
 
 Supported: Node.js, Python, Rust, Go, PHP, Ruby, Dart/Flutter, Swift, Kotlin/Java
 Frameworks: SvelteKit, React, Next.js, Solid.js, Vue/Nuxt, Astro, Django, Laravel, Express
