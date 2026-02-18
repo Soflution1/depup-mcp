@@ -411,21 +411,60 @@ async function toggleAutoUpdate(project, enabled){
 async function updateAllProjects(){
   const btn=document.getElementById('update-all-btn');
   btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span>Updating all...';
+  btn.innerHTML='<span class="spinner"></span>Updating...';
+
+  const toUpdate=allProjects.filter(p=>p.outdatedCount>0);
+  if(!toUpdate.length){btn.disabled=false;btn.innerHTML='⬆ Update All Projects';return}
+
+  // Show progress overlay
+  let overlay=document.getElementById('update-all-overlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='update-all-overlay';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center';
+    document.body.appendChild(overlay);
+  }
+
+  const panel=document.createElement('div');
+  panel.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;width:520px;max-height:80vh;overflow-y:auto';
+  panel.innerHTML='<h2 style="margin-bottom:16px;font-size:18px">Updating '+toUpdate.length+' projects...</h2><div id="update-progress"></div>';
+  overlay.innerHTML='';
+  overlay.appendChild(panel);
+
+  const progress=document.getElementById('update-progress');
   const results=[];
-  for(const proj of allProjects.filter(p=>p.outdatedCount>0)){
+
+  for(let i=0;i<toUpdate.length;i++){
+    const proj=toUpdate[i];
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
+    row.innerHTML='<span class="spinner"></span><span style="flex:1">'+esc(proj.project)+'</span><span style="color:var(--dim);font-size:12px">'+(i+1)+'/'+toUpdate.length+'</span>';
+    progress.appendChild(row);
+
     try{
       const r=await fetch('/api/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project:proj.project,level:'minor'})});
       const d=await r.json();
-      results.push({project:proj.project,success:d.success!==false,cmd:d.command});
-    }catch(e){results.push({project:proj.project,success:false,cmd:e.message})}
+      const ok=d.success!==false;
+      results.push({project:proj.project,success:ok});
+      row.innerHTML=(ok?'<span style="color:var(--ok);font-size:18px">✓</span>':'<span style="color:var(--danger);font-size:18px">✗</span>')+
+        '<span style="flex:1">'+esc(proj.project)+'</span>'+
+        '<span style="color:var(--dim);font-size:12px">'+(ok?'updated':'failed')+'</span>';
+    }catch(e){
+      results.push({project:proj.project,success:false});
+      row.innerHTML='<span style="color:var(--danger);font-size:18px">✗</span><span style="flex:1">'+esc(proj.project)+'</span><span style="color:var(--dim);font-size:12px">error</span>';
+    }
   }
-  btn.disabled=false;
-  btn.innerHTML='⬆ Update All Projects';
+
   const ok=results.filter(r=>r.success).length;
   const fail=results.filter(r=>!r.success).length;
-  alert('Update complete: '+ok+' succeeded, '+fail+' failed');
-  triggerScan();
+  const summary=document.createElement('div');
+  summary.style.cssText='margin-top:16px;display:flex;justify-content:space-between;align-items:center';
+  summary.innerHTML='<span style="font-size:14px"><strong style="color:var(--ok)">'+ok+' updated</strong>'+(fail?' · <strong style="color:var(--danger)">'+fail+' failed</strong>':'')+'</span>'+
+    '<button class="btn btn-primary btn-sm" onclick="document.getElementById(\'update-all-overlay\').remove();triggerScan()">Close & Rescan</button>';
+  progress.appendChild(summary);
+
+  btn.disabled=false;
+  btn.innerHTML='⬆ Update All Projects';
 }
 
 async function triggerScan(){
