@@ -6,6 +6,7 @@
   <sub>Scan · Audit · Update · Migrate — 9 languages, 23 tools, one MCP server</sub>
 </p>
 <p align="center">
+  <img src="https://img.shields.io/npm/v/depsonar?color=60a5fa&label=npm"/>
   <img src="https://img.shields.io/badge/languages-9-34d399"/>
   <img src="https://img.shields.io/badge/tools-23-60a5fa"/>
   <img src="https://img.shields.io/badge/CVE_scanner-live-f59e0b"/>
@@ -239,6 +240,12 @@ depsonar --check      # Run background scan
 depsonar --version    # Show version
 depsonar --help       # List all 23 tools
 ```
+
+---
+
+## Also by Soflution
+
+- **[brandcheck](https://github.com/Soflution1/brandcheck)** — Check brand name availability across 27 platforms in one shot. Domains, social media, app stores, trademarks.
 
 ---
 
