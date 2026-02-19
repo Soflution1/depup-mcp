@@ -15,6 +15,8 @@
 
 <p align="center">
   <a href="cursor://anysphere.cursor-deeplink/mcp/install?name=depsonar&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImRlcHNvbmFyQGxhdGVzdCJdfQ=="><img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" /></a>
+  &nbsp;&nbsp;
+  <a href="https://soflution1.github.io/BrandCheck/install.html?name=depsonar&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImRlcHNvbmFyQGxhdGVzdCJdfQ=="><img src="https://img.shields.io/badge/Install_via-Web-60a5fa?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyYTEwIDEwIDAgMSAwIDAgMjAgMTAgMTAgMCAwIDAgMC0yMHoiLz48cGF0aCBkPSJNMiAxMmgyMCIvPjxwYXRoIGQ9Ik0xMiAyYTEwIDEwIDAgMCAxIDggOCAxMCAxMCAwIDAgMS04IDgiLz48cGF0aCBkPSJNMTIgMmExMCAxMCAwIDAgMC04IDggMTAgMTAgMCAwIDAgOCA4Ii8+PC9zdmc+" alt="Install via Web" /></a>
 </p>
 
 **depsonar** is an MCP server that keeps your projects' dependencies up to date, scans for vulnerabilities, detects framework migrations, and audits your entire dev infrastructure — directly from Cursor, Claude, or any MCP-compatible AI assistant.
